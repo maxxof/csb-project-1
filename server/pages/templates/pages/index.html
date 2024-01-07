@@ -23,8 +23,10 @@
 		
         <h2>Transfer money</h2>
 
-        <form action='transfer/' method="POST">
-			{% csrf_token %}
+        <form action='transfer/' method="GET">
+			<!-- CSRF vulnerability with GET method -->
+			<!-- {% csrf_token %} -->
+            <input type="hidden" name="from" value="{{user.username}}">
             <span>To:</span><br/>
             <select name="to">
 			{% for account in accounts %}

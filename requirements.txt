@@ -1,0 +1,19 @@
+asgiref==3.7.2
+beautifulsoup4==4.12.2
+bleach==6.1.0
+certifi==2023.7.22
+charset-normalizer==3.3.2
+Django==4.2.7
+docutils==0.20.1
+idna==3.4
+Pygments==2.17.2
+readme-renderer==36.0
+requests==2.31.0
+# "restview before 2.8.1 isn't properly checking the host header in HTTP requests, leading to possible DNS rebinding attacks. More info: https://github.com/mgedmin/restview/issues/51"
+restview==2.8.0
+selenium==3.141.0
+six==1.16.0
+soupsieve==2.5
+sqlparse==0.4.4
+urllib3==1.26.18
+webencodings==0.5.1
