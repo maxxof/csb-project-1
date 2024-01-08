@@ -1,10 +1,9 @@
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import Account
 from random import randint
-from django.db import connection, transaction
+from django.db import connection
 
 
 # @login_required
@@ -22,33 +21,45 @@ from django.db import connection, transaction
 # 	else:
 # 		print('not granted')
 # 	return redirect('/')
-	
-# @login_required
+
+
+# A5:2017-Broken Access Control and CSRF vulnerability
+@login_required
 def transferView(request):
-	# if request.method == 'GET':
-	request.session['from'] = request.GET.get('from')
-	request.session['to'] = request.GET.get('to')
-	request.session['amount'] = request.GET.get('amount')
-	amount = request.session['amount']
-	sender = User.objects.get(username=request.session['from'])
-	receiver = User.objects.get(username=request.session['to'])
+	if request.user.is_authenticated:
+		# if request.method == 'GET':
+		request.session['from'] = request.GET.get('from')
+		request.session['to'] = request.GET.get('to')
+		request.session['amount'] = request.GET.get('amount')
+		amount = request.session['amount']
+		sender = User.objects.get(username=request.session['from'])
+		receiver = User.objects.get(username=request.session['to'])
 
+		try:
+			amount = int(request.session['amount'])
+			sender.account.balance -= amount
+			sender.account.save()
+			amount = receiver.account.balance + amount
+		except:
+			pass
+		
+		# A1:2017-Injection
+		# for example typing in the amount box "0; --" resets every account's balance to 0
+		query = f"UPDATE pages_account SET balance = {amount} WHERE user_id = {receiver.id};"
+		with connection.cursor() as cursor:
+			cursor.execute(query)
+		# return render(request, 'pages/confirm.html')
+		return redirect('/')
+
+# A3:2017-Sensitive Data Exposure
+@login_required
+def balanceView(request, username):
 	try:
-		amount = int(request.session['amount'])
-		sender.account.balance -= amount
-		sender.account.save()
-		amount = receiver.account.balance + amount
+		user = User.objects.get(username=username)
 	except:
-		pass
+		return redirect('/')
 
-	query = f"UPDATE pages_account SET balance = {amount} WHERE user_id = {receiver.id};"
-	with connection.cursor() as cursor:
-		cursor.execute(query)
-	# receiver.account.save()
-	# return render(request, 'pages/confirm.html')
-	return redirect('/')
-
-
+	return render(request, 'pages/balance.html', {'user': user, 'balance': user.account.balance})
 
 
 @login_required

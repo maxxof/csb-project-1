@@ -12,7 +12,10 @@
 		<tr>
 		<th style="text-align:left">Username: <td>{{user.username}} 
 		<tr>
-		<th style="text-align:left">Balance:  <td>{{user.account.balance}}
+		<!-- <th style="text-align:left">Balance:  <td>{{user.account.balance}} -->
+        <form action='balance/{{user.username}}' method="GET">
+        <th style="text-align: left">Click to check balance: <td><input type="submit" value="Balance"/>
+        </form>
 		</table>
 
 
@@ -24,7 +27,6 @@
         <h2>Transfer money</h2>
 
         <form action='transfer/' method="GET">
-			<!-- CSRF vulnerability with GET method -->
 			<!-- {% csrf_token %} -->
             <input type="hidden" name="from" value="{{user.username}}">
             <span>To:</span><br/>
