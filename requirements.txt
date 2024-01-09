@@ -5,6 +5,8 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
 click==8.1.7
 # A9:2017-Using Components with Known Vulnerabilities
+# <-- FIX -->
+# $ python3 -m pip3 install -U Django
 Django==4.2.3
 docutils==0.20.1
 dparse==0.6.3

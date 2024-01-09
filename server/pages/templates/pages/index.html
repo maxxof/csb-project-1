@@ -12,7 +12,6 @@
 		<tr>
 		<th style="text-align:left">Username: <td>{{user.username}} 
 		<tr>
-		<!-- <th style="text-align:left">Balance:  <td>{{user.account.balance}} -->
         <form action='balance/{{user.username}}' method="GET">
         <th style="text-align: left">Click to check balance: <td><input type="submit" value="Balance"/>
         </form>
@@ -20,7 +19,7 @@
 
 
         <form action='logout/' method="POST">
-			{% csrf_token %}
+			<!-- {% csrf_token %} -->
             <input type="submit" value="Logout"/>
         </form>
 		
