@@ -15,7 +15,7 @@ def transferView(request):
 		# in templates/index.html change the method of a transfer from from GET to POST
 		# and uncomment {% csrf_token %} line to include csrf tokens with every action
 		# uncomment POST-gets and comment out GET-gets
-		# request.session['from'] = request.POST.get('from')
+		# request.session['from'] = request.user.username
 		# request.session['to'] = request.POST.get('to')
 		# request.session['amount'] = request.POST.get('amount')
 			request.session['from'] = request.GET.get('from')
