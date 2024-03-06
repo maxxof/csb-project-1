@@ -26,12 +26,12 @@ https://github.com/maxxof/csb-project-1/blob/9a857b779b62baa232f8c323d39db6b74c3
 
 DESCRIPTION:
 
-This flaw predisposes a system to unauthorized access to other users account balance by poor authorization system and system architecture, which is based on form using GET-method instead of POST-method. This vulnerability gives an user possibility to transfer money from any user’s account to desired account simply by putting right parameters (such as /transfer/?from=bob&to=alice&amount=9999) into the url. Program does not have any authorization system since all the transfer logic is based on GET-parameters given in the HTML-form. The biggest and most concerning design flaw here is extracting sender’s information from a form, which instead should be configured in the backend using built-in tools such as request.user. This flaw gives a direct possibility for CSRF-attacks which will be presented next. 
+This flaw predisposes a system to unauthorized access to other users account balance by poor authorization system and system architecture, which is based on extracting authorization data from GET-request. This vulnerability gives an user possibility to transfer money from any user’s account to desired account simply by putting right parameters (such as /transfer/?from=bob&to=alice&amount=9999) into the url. Program does not have any authorization system since all the transfer logic is based on GET-parameters given in the HTML-form. The biggest and most concerning design flaw here is extracting sender’s information from a form, which instead should be configured in the backend using built-in tools such as request.user. This flaw gives a direct possibility for CSRF-attacks which will be presented next. 
 
 FIX: 
 
 https://github.com/maxxof/csb-project-1/blob/9a857b779b62baa232f8c323d39db6b74c3fa8d9/server/pages/views.py#L12 
-First step would be changing the form method from GET to POST. Then we add a check that a request uses truly “POST” method. Next we extract the receiver with request.POST.get() method and for the correct authorization we extract sender as a user of the request, making it impossible to set a different sender. 
+First step would be changing the form method from GET to POST. Then we add a check that a request uses POST method. Next we extract the receiver and amount with request.POST.get() method and for the correct authorization we extract sender as a user of the request instead of extracting sender from GET-method, making it impossible to set a different sender thus providing correct authorization. Even though attacker could use special tools to manipulate POST request it will never go through because every transfer action needs correct user authentication and authorization
 
  
 ## FLAW 3: CSRF-vulnerability 
@@ -45,7 +45,7 @@ https://github.com/maxxof/csb-project-1/blob/main/csrf_vulnerability/csrf.html
 FIX: 
 
 https://github.com/maxxof/csb-project-1/blob/9a857b779b62baa232f8c323d39db6b74c3fa8d9/server/pages/views.py#L14 
-Fix for this vulnerability is almost the same as it is for the broken access control flaw, but by adding csrf-tokens to each request and checking that the request has wanted ‘csrfmiddlewaretoken’. This way previous phishing method with csrf-file won’t work since it no longer uses a GET-method and the sender is extracted as an authenticated request user. 
+Fix for this vulnerability is almost the same as it is for the broken access control flaw, but by adding csrf-tokens to each request and using Django's built-in mechanism @csrf_protect to check if csrfmiddlewaretoken is correct. This way previous phishing method with csrf-file won’t work since it no longer uses a GET-method and the sender is extracted as an authenticated request user. 
 
  
 ## FLAW 4: Sensitive Data Exposure 
@@ -53,7 +53,7 @@ https://github.com/maxxof/csb-project-1/blob/9a857b779b62baa232f8c323d39db6b74c3
 
 DESCRIPTION: 
 
-This software security flaw can expose users sensitive data to unauthorized users. The flaw is similar to broken access control since it is a product of a poor software design choice by using parameterized GET-method. If an user logged in it can gain access to other users accounts balance simply by inserting an username into the url (for example typing /balance/alice as a bob can view alice’s balance). Account balance is a sensitive information, just as the passwords are, in every banking system and it shouldn’t be available to other users. 
+This software security flaw can expose users sensitive data to unauthorized users. The flaw is similar to broken access control since it is a product of a poor software design choice by using parameterized GET-method without actually authenticating correct user of the request. If an user logged in it can gain access to other users accounts balance simply by inserting an username into the url (for example typing /balance/alice as a bob can view alice’s balance). Account balance is a sensitive information, just as the passwords are, in every banking system and it shouldn’t be available to other users. 
  
 FIX: 
 

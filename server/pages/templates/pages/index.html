@@ -25,7 +25,8 @@
 		
         <h2>Transfer money</h2>
 
-        <form action='transfer/' method="GET">
+        <form action='transfer/' method="GET"> <!-- change here to POST -->
+            <!-- uncomment next row to fix CSRF vulnerability -->
 			<!-- {% csrf_token %} -->
             <input type="hidden" name="from" value="{{user.username}}">
             <span>To:</span><br/>

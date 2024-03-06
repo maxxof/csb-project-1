@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import Account
@@ -6,18 +7,21 @@ from random import randint
 from django.db import connection
 
 # A5:2017-Broken Access Control and CSRF vulnerability
+# to fix CSRF vulnerability uncomment next row
+# @csrf_protect
 @login_required
 def transferView(request):
 	if request.user.is_authenticated:
 		# <-- FIX FOR BROKEN ACCESS CONTROL -->
 		# uncomment next row
-		# if request.method == 'POST' and request.POST.get('csrfmiddlewaretoken'):
+		# if request.method == 'POST':
 		# in templates/index.html change the method of a transfer from from GET to POST
 		# and uncomment {% csrf_token %} line to include csrf tokens with every action
+		# to fix Broken Access Control, uncomment next row
+			# request.session['from'] = request.user.username
 		# uncomment POST-gets and comment out GET-gets
-		# request.session['from'] = request.user.username
-		# request.session['to'] = request.POST.get('to')
-		# request.session['amount'] = request.POST.get('amount')
+			# request.session['to'] = request.POST.get('to')
+			# request.session['amount'] = request.POST.get('amount')
 			request.session['from'] = request.GET.get('from')
 			request.session['to'] = request.GET.get('to')
 			request.session['amount'] = request.GET.get('amount')
